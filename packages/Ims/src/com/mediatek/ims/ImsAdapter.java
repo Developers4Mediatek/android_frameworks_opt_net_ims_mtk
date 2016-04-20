@@ -49,7 +49,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+import android.telephony.Rlog;
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.TelephonyIntents;
 import com.mediatek.internal.telephony.ITelephonyEx;
@@ -271,11 +271,11 @@ public class ImsAdapter extends BroadcastReceiver {
             mSocketName = socket_name;
             // TODO: buffer size confirm
             buf = new byte[8];
-            Log.d("@M_" + TAG, "VaSocketIO(): Enter");
+            Rlog.d("@M_" + TAG, "VaSocketIO(): Enter");
         }
 
         public void run() {
-            Log.d("@M_" + TAG, "VaSocketIO(): Run");
+            Rlog.d("@M_" + TAG, "VaSocketIO(): Run");
             while (true) {
                 if (misImsAdapterEnabled) {
                     boolean doTrm = false;
@@ -297,14 +297,14 @@ public class ImsAdapter extends BroadcastReceiver {
                             doTrm = true;
                         }
                         e.printStackTrace();
-                        Log.d("@M_" + TAG, "VaSocketIO(): InterruptedIOException (" + (doTrm == true ? "1" : "0") + ")");
+                        Rlog.d("@M_" + TAG, "VaSocketIO(): InterruptedIOException (" + (doTrm == true ? "1" : "0") + ")");
                     } catch (Exception e) {
                         disconnectSocket();
                         e.printStackTrace();
                         if (misImsAdapterEnabled && (IS_USER_BUILD || IS_USERDEBUG_BUILD)) {
                             doTrm = true;
                         }
-                        Log.d("@M_" + TAG, "VaSocketIO(): Exception (" + (doTrm == true ? "1" : "0") + ")");
+                        Rlog.d("@M_" + TAG, "VaSocketIO(): Exception (" + (doTrm == true ? "1" : "0") + ")");
                     }
 
                     if (doTrm == true) {
@@ -313,18 +313,18 @@ public class ImsAdapter extends BroadcastReceiver {
                 } else {
                     synchronized (VaSocketIOThreadLock) {
                         try {
-                            Log.d("@M_" + TAG, "VaSocketIO(): thread \""
+                            Rlog.d("@M_" + TAG, "VaSocketIO(): thread \""
                                     + Thread.currentThread().getId()
                                     + "\" enter wait state");
 
                             VaSocketIOThreadLock.wait();
 
-                            Log.d("@M_" + TAG, "VaSocketIO(): thread \""
+                            Rlog.d("@M_" + TAG, "VaSocketIO(): thread \""
                                     + Thread.currentThread().getId()
                                     + "\" leave wait state");
 
                         } catch (InterruptedException ie) {
-                            Log.d("@M_" + TAG, "VaSocketIO(): waiting thread \""
+                            Rlog.d("@M_" + TAG, "VaSocketIO(): waiting thread \""
                                     + Thread.currentThread().getId()
                                     + "\" interrupted ("
                                     + ie.getMessage()+")");
@@ -335,10 +335,10 @@ public class ImsAdapter extends BroadcastReceiver {
         }
 
         public boolean connectSocket() {
-            Log.d("@M_" + TAG, "connectSocket() Enter");
+            Rlog.d("@M_" + TAG, "connectSocket() Enter");
 
             if (mSocket != null)  {
-                Log.d("@M_" + TAG, "connectSocket() Reuse current Socket");
+                Rlog.d("@M_" + TAG, "connectSocket() Reuse current Socket");
 
                 mPhoneId = Util.getDefaultVoltePhoneId();
 
@@ -363,7 +363,7 @@ public class ImsAdapter extends BroadcastReceiver {
                 sendBufferSize = mSocket.getSendBufferSize();
 
                 mPhoneId = Util.getDefaultVoltePhoneId();
-                Log.d("@M_" + TAG, "connectSocket() update socket phone Id: " + mPhoneId);
+                Rlog.d("@M_" + TAG, "connectSocket() update socket phone Id: " + mPhoneId);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -374,7 +374,7 @@ public class ImsAdapter extends BroadcastReceiver {
         }
 
         public void disconnectSocket() {
-            Log.d("@M_" + TAG, "disconnectSocket() Enter, mOut=" + mOut + ",mDin=" + mDin);
+            Rlog.d("@M_" + TAG, "disconnectSocket() Enter, mOut=" + mOut + ",mDin=" + mDin);
             try {
                 if (mOut != null) {
                     mOut.close();
@@ -392,7 +392,7 @@ public class ImsAdapter extends BroadcastReceiver {
                 mOut = null;
                 mDin = null;
                 mPhoneId = SubscriptionManager.INVALID_PHONE_INDEX;
-                Log.d("@M_" + TAG, "disconnectSocket() reset socket phone Id");
+                Rlog.d("@M_" + TAG, "disconnectSocket() reset socket phone Id");
             }
         }
 
@@ -407,14 +407,14 @@ public class ImsAdapter extends BroadcastReceiver {
         }
 
         public int writeEvent(VaEvent event) {
-            Log.d("@M_" + TAG, "writeEvent Enter");
+            Rlog.d("@M_" + TAG, "writeEvent Enter");
             int ret = -1;
             try {
                 synchronized (this) {
                     if (mOut != null) {
                         if (event.getPhoneId() == SubscriptionManager.INVALID_PHONE_INDEX
                                 || event.getPhoneId() != mPhoneId) {
-                            Log.d("@M_" + TAG,
+                            Rlog.d("@M_" + TAG,
                                     "writeEvent event phoneId mismatch, event skipped. (event requestId="
                                             + event.getRequestID()
                                             + ", phoneId=" + event.getPhoneId()
@@ -430,7 +430,7 @@ public class ImsAdapter extends BroadcastReceiver {
                             ret = 0;
                         }
                     } else {
-                        Log.d("@M_" + TAG, "mOut is null, socket is not setup");
+                        Rlog.d("@M_" + TAG, "mOut is null, socket is not setup");
                     }
                 }
             } catch (Exception e) {
@@ -451,7 +451,7 @@ public class ImsAdapter extends BroadcastReceiver {
         }
 
         private VaEvent readEvent() throws IOException {
-            Log.d("@M_" + TAG, "readEvent Enter");
+            Rlog.d("@M_" + TAG, "readEvent Enter");
             int request_id;
             int data_len;
             byte buf [];
@@ -471,7 +471,7 @@ public class ImsAdapter extends BroadcastReceiver {
         }
 
         private void dumpEvent(VaEvent event) {
-            Log.d("@M_" + TAG, "dumpEvent: phone_id:" + event.getPhoneId()
+            Rlog.d("@M_" + TAG, "dumpEvent: phone_id:" + event.getPhoneId()
                     + ",request_id:" + event.getRequestID()
                     + ",data_len:" + event.getDataLen()
                     + ",event:" + event.getData());
@@ -504,7 +504,7 @@ public class ImsAdapter extends BroadcastReceiver {
             mInstance = this;
         }
 
-        Log.d("@M_" + TAG, "ImsAdapter(): ImsAdapter Enter");
+        Rlog.d("@M_" + TAG, "ImsAdapter(): ImsAdapter Enter");
         // new the mIO object to communicate with the va
         mIO = new VaSocketIO(SOCKET_NAME1);
         mImsEventDispatcher = new ImsEventDispatcher(mContext, mIO);
@@ -517,12 +517,12 @@ public class ImsAdapter extends BroadcastReceiver {
     }
 
     public void enableImsAdapter() {
-        Log.d("@M_" + TAG, "enableImsAdapter: misImsAdapterEnabled="
+        Rlog.d("@M_" + TAG, "enableImsAdapter: misImsAdapterEnabled="
                 + misImsAdapterEnabled);
 
         if (!misImsAdapterEnabled) {
             if (mIO.connectSocket() == true) {
-                Log.d("@M_" + TAG, "enalbeImsAdapter(): connectSocket success");
+                Rlog.d("@M_" + TAG, "enalbeImsAdapter(): connectSocket success");
 
                 // start domain event dispatcher to recieve broadcast
                 mImsEventDispatcher.enableRequest();
@@ -534,7 +534,7 @@ public class ImsAdapter extends BroadcastReceiver {
 
                 enableImsStack();
             } else {
-                Log.d("@M_" + TAG, "enableImsAdapter(): connectSocket error");
+                Rlog.d("@M_" + TAG, "enableImsAdapter(): connectSocket error");
 
                 // restart MAL
                 if (misImsAdapterEnabled && (IS_USER_BUILD || IS_USERDEBUG_BUILD)) {
@@ -550,7 +550,7 @@ public class ImsAdapter extends BroadcastReceiver {
 
     public void disableImsAdapter(boolean isNormalDisable) {
 
-        Log.d("@M_" + TAG, "disableImsAdapter(): misImsAdapterEnabled="
+        Rlog.d("@M_" + TAG, "disableImsAdapter(): misImsAdapterEnabled="
                 + misImsAdapterEnabled + ", isNormalDisable="
                 + isNormalDisable);
 
@@ -575,12 +575,12 @@ public class ImsAdapter extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-        Log.d("@M_" + TAG, "onReceive, intent action is " + action);
+        Rlog.d("@M_" + TAG, "onReceive, intent action is " + action);
     }
 
     public void ImsServiceUp() {
         mImsServiceUp = true;
-        Log.d("@M_" + TAG, "ImsServiceUp, start to ACTION_IMS_SERVICE_UP intent");
+        Rlog.d("@M_" + TAG, "ImsServiceUp, start to ACTION_IMS_SERVICE_UP intent");
 /*
         Intent intent = new Intent(ImsManager.ACTION_IMS_SERVICE_UP);
         mContext.sendBroadcast(intent);
@@ -618,6 +618,15 @@ public class ImsAdapter extends BroadcastReceiver {
 
     private void enableImsStack() {
 
+        /*
+        SystemProperties.set("ril.volte.stack", "1");
+        SystemProperties.set("ril.volte.ua", "1");
+        SystemProperties.set("ril.volte.imcb", "1");
+        if (SystemProperties.get("ro.mtk_wfc_support").equals("1")) {
+            SystemProperties.set("ril.volte.wfca", "1");
+        }
+        */
+
         // Send IMS Enable to IMSM
         VaEvent event = new VaEvent(Util.getDefaultVoltePhoneId(), MSG_ID_IMS_ENABLE_IND);
         mIO.writeEvent(event);
@@ -631,20 +640,29 @@ public class ImsAdapter extends BroadcastReceiver {
         VaEvent event = new VaEvent(Util.getDefaultVoltePhoneId(), MSG_ID_IMS_DISABLE_IND);
         mIO.writeEvent(event);
 
+        /*
+        SystemProperties.set("ril.volte.stack", "0");
+        SystemProperties.set("ril.volte.ua", "0");
+        SystemProperties.set("ril.volte.imcb", "0");
+        if (SystemProperties.get("ro.mtk_wfc_support").equals("1")) {
+            SystemProperties.set("ril.volte.wfca", "0");
+        }
+        */
+
         return;
     }
 
     private void invokeTrm() {
         int trmPhoneId = Util.getDefaultVoltePhoneId();
-        Log.d("@M_" + TAG, "VaSocketIO(): recover Phone (trmPhoneId=" + trmPhoneId + ")");
+        Rlog.d("@M_" + TAG, "VaSocketIO(): recover Phone (trmPhoneId=" + trmPhoneId + ")");
 
         try {
             getITelephonyEx().setTrmForPhone(trmPhoneId, 2);
         } catch (RemoteException re) {
-            Log.d("@M_" + TAG, "VaSocketIO: phone trm exception (re: "+re.getMessage()+")");
+            Rlog.d("@M_" + TAG, "VaSocketIO: phone trm exception (re: "+re.getMessage()+")");
         } catch (NullPointerException npex) {
         // This could happen before phone restarts due to crashing
-            Log.d("@M_" + TAG, "VaSocketIO: phone trm exception (npex: "+npex.getMessage()+")");
+            Rlog.d("@M_" + TAG, "VaSocketIO: phone trm exception (npex: "+npex.getMessage()+")");
         }
     }
 }

@@ -202,12 +202,96 @@ public class ImsConfigStub extends IImsConfig.Stub {
     private String getAtCmdLine(int item) {
         String atCmdString = "";
         Log.i(TAG, "getAtCmdLine:" + item);
+
+        switch (item) {
+        case ImsConfig.ConfigConstants.SIP_T1_TIMER:
+            atCmdString = "AT+ECFGGET=\"UA_timer_T1\"";
+            break;
+        case ImsConfig.ConfigConstants.SIP_T2_TIMER:
+            atCmdString = "AT+ECFGGET=\"UA_timer_T2\"";
+            break;
+        case ImsConfig.ConfigConstants.SIP_TF_TIMER:
+            atCmdString = "AT+ECFGGET=\"UA_timer_T4\"";
+            break;
+        /*
+        case ImsConfig.ConfigConstants.IMS_MO_RESOURCE:
+            atCmdString = "AT+ECFGGET=\"resource_allocation_mode\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_MOBILITY:
+            atCmdString = "AT+CMMIVT?";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_SMS:
+            atCmdString = "AT+ECFGGET=\"sms_over_ip\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_KEEPALIVE:
+            atCmdString = "AT+ECFGGET=\"UA_keep_alive\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_VOICE_E:
+            atCmdString = "AT+CEVDP?";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_VOICE_U:
+            atCmdString = "AT+CVDP?";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_REG_BASE:
+            atCmdString = "AT+ECFGGET=\"UA_reg_retry_base_time\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_REG_MAX:
+            atCmdString = "AT+ECFGGET=\"UA_reg_retry_max_time\"";
+            break;
+        */
+        default:
+            Log.e(TAG, "Unknown item option");
+            break;
+        }
+
         return atCmdString;
     }
 
     private String getAtCmdSetLine(int item, int value) {
         String atCmdString = "";
         Log.i(TAG, "getAtCmdLine:" + item);
+
+        switch (item) {
+        case ImsConfig.ConfigConstants.SIP_T1_TIMER:
+            atCmdString = "AT+ECFGSET=\"UA_timer_T1\", \"" + value + "\"";
+            break;
+        case ImsConfig.ConfigConstants.SIP_T2_TIMER:
+            atCmdString = "AT+ECFGSET=\"UA_timer_T2\", \"" + value + "\"";
+            break;
+        case ImsConfig.ConfigConstants.SIP_TF_TIMER:
+            atCmdString = "AT+ECFGSET=\"UA_timer_T4\", \"" + value + "\"";
+            break;
+        /*
+        case ImsConfig.ConfigConstants.IMS_MO_RESOURCE:
+            atCmdString = "AT+ECFGSET=\"resource_allocation_mode\", \"" + value + "\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_MOBILITY:
+            atCmdString = "AT+CMMIVT=" + value;
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_SMS:
+            atCmdString = "AT+ECFGSET=\"sms_over_ip\", \"" + value + "\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_KEEPALIVE:
+            atCmdString = "AT+ECFGSET=\"UA_keep_alive\", \"" + value + "\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_VOICE_E:
+            atCmdString = "AT+CEVDP=" + value;
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_VOICE_U:
+            atCmdString = "AT+CVDP=" + value;
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_REG_BASE:
+            atCmdString = "AT+ECFGSET=\"UA_reg_retry_base_time\", \"" + value + "\"";
+            break;
+        case ImsConfig.ConfigConstants.IMS_MO_REG_MAX:
+            atCmdString = "AT+ECFGSET=\"UA_reg_retry_max_time\", \"" + value + "\"";
+            break;
+        */
+        default:
+            Log.e(TAG, "Unknown item option");
+            break;
+        }
+
         return atCmdString;
     }
 

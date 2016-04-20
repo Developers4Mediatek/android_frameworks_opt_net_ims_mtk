@@ -855,6 +855,11 @@ public class ImsService extends IImsService.Stub {
                     if (DBG) {
                         Rlog.d(LOG_TAG, "receive EVENT_SET_IMS_ENABLED_DONE");
                     }
+                    // xen0n: Lollipop baseband doesn't send +EIMS: 1 to RIL...
+                    // try to simulate that instead
+                    Rlog.d(LOG_TAG, "xen0n: faking EVENT_IMS_ENABLING_URC");
+                    final Message fakeUrcMessage = mHandler.obtainMessage(EVENT_IMS_ENABLING_URC);
+                    mHandler.sendMessageDelayed(fakeUrcMessage, 3000);  // 3 s
                     break;
                 case EVENT_SET_IMS_DISABLE_DONE:
                     // Only log for tracking set ims disable command response
